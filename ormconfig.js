@@ -6,5 +6,4 @@ module.exports = {
         "migrationsDir": ["./src/shared/typeorm/migrations/"]
     },
     "entities": ["./dist/modules/**/typeorm/entities/*.js"],
-    "ssl": true, "extra": { "ssl": { "rejectUnauthorized": false }}
 }
