@@ -20,7 +20,7 @@ app.use(routes);
 
 app.use(errorMidleware);
 
-app.listen(process.env.PORT, () => {
+app.listen(process.env.PORT || 3000, () => {
     console.log('running... 🏆');
-    console.log('http://localhost:3000');
+    console.log('http://localhost:' + process.env.PORT);
 });

@@ -18,8 +18,9 @@ const getOptions = async () => {
         entities: ['./src/modules/**/typeorm/entities/**.ts'],
         cli: { migrationsDir: './src/shared/typeorm/migrations' },
     };
-    if (process.env.DATABASE_URL) {
-        Object.assign(connectionOptions, { url: process.env.DATABASE_URL });
+    if (process.env.POSTGRES_URL) {
+        console.log(process.env.POSTGRES_URL);
+        Object.assign(connectionOptions, { url: process.env.POSTGRES_URL });
     } else {
         // gets your default configuration
         // you could get a specific config by name getConnectionOptions('production')
