@@ -5,5 +5,6 @@ module.exports = {
     "cli": {
         "migrationsDir": ["./src/shared/typeorm/migrations/"]
     },
-    "entities": ["./dist/modules/**/typeorm/entities/*.js"]
+    "entities": ["./dist/modules/**/typeorm/entities/*.js"],
+    "ssl": true, "extra": { "ssl": { "rejectUnauthorized": false }}
 }
