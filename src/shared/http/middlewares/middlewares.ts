@@ -14,10 +14,7 @@ const errorMidleware = (
             message: err.message,
         });
     }
-    return res.status(400).json({
-        status: 'error',
-        message: 'Internal server Error',
-    });
+    return res.json(err);
 };
 
 export default errorMidleware;

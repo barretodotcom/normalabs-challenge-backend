@@ -1,47 +1,41 @@
 import AppError from '@shared/errors/AppErrors';
 import { getCustomRepository } from 'typeorm';
-import User from '../typeorm/entities/users';
-import UserRepository from '../typeorm/repositories/UserRepository';
+import { UserTokenRepository } from '../typeorm/repository/UserTokenRepository';
+import { addHours, isAfter } from 'date-fns';
+import UsersRepository from '../typeorm/repository/UsersRepository';
+import { genSaltSync, hashSync } from 'bcryptjs';
+import { User } from '../typeorm/entities/User';
 
-interface IChangePasswordService {
-    id: string;
-    name: string;
-    email: string;
+interface IChangePassword {
+    token: string;
     password: string;
-    birthdate: Date;
-    gen: string;
 }
 
-class ChangePasswordService {
-    public async execute({
-        id,
-        name,
-        email,
-        password,
-        gen,
-    }: IChangePasswordService): Promise<User> {
-        const userRepository = getCustomRepository(UserRepository);
-        const user = await userRepository.findOne(id);
+export class ChangePasswordService {
+    public async execute({ token, password }: IChangePassword): Promise<void> {
+        const tokenRepository = getCustomRepository(UserTokenRepository);
+        const usersRepository = getCustomRepository(UsersRepository);
+        const userToken = await tokenRepository.findByToken(token);
+
+        if (!userToken) {
+            throw new AppError('Token inválido.');
+        }
+
+        const user = await usersRepository.findById(userToken.userId);
 
         if (!user) {
-            throw new AppError('Usuário não encontrado.');
+            throw new AppError('Este usuário não existe.');
         }
 
-        const userExists = await userRepository.findByEmail(email);
+        const hourValid = addHours(userToken.createdAt, 2);
 
-        if (userExists && password != user.password) {
-            throw new AppError('Você não pode trocar sua senha por uma igual à anterior.');
+        if (isAfter(Date.now(), hourValid)) {
+            throw new AppError('Este token expirou.');
         }
 
-        user.name = name;
-        user.email = email;
-        user.password = password;
-        user.gen = gen;
+        const salt = genSaltSync();
+        user.password = hashSync(password, salt);
 
-        await userRepository.save(user);
-
-        return user;
+        await usersRepository.save(user);
     }
 }
-
-export default ChangePasswordService;

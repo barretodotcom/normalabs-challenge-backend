@@ -1,12 +1,9 @@
-.idea/
-.vscode/
 node_modules/
+.env
 build/
 temp/
-.env
 coverage
 ormconfig.json
 dist
-
-uploads/*
 !uploads/.gitkeep
+uploads/*

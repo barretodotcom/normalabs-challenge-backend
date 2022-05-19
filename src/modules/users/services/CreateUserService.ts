@@ -1,41 +1,54 @@
 import AppError from '@shared/errors/AppErrors';
 import { getCustomRepository } from 'typeorm';
-import UserRepository from '../typeorm/repositories/UserRepository';
+import UsersRepository from '../typeorm/repository/UsersRepository';
+import { User } from '../typeorm/entities/User';
+import { genSaltSync, hashSync } from 'bcryptjs';
+import validator from 'validator';
+import RedisCache from '@shared/cache/RedisCache';
 
-interface UserRequest {
+interface IUser {
     name: string;
     email: string;
     password: string;
-    birthdate: Date;
-    gen: string;
+    age: number;
+    avatar?: string;
 }
 
-class CreateUserService {
+export default class CreateUserService {
     public async execute({
         name,
         email,
         password,
-        birthdate,
-        gen,
-    }: UserRequest) {
-        const userRepository = getCustomRepository(UserRepository);
-        const userExist = await userRepository.findByEmail(email);
+        age,
+        avatar,
+    }: IUser): Promise<IUser> {
+        const usersRepository = getCustomRepository(UsersRepository);
+        const redisCache = new RedisCache();
 
-        if (userExist) {
-            throw new AppError('Usuário já existente.');
+        if (!validator.isEmail(email)) {
+            throw new AppError('Insira um email válido.');
         }
-        const user = userRepository.create({
+        const userExists = await usersRepository.findByEmail(email);
+
+        if (userExists) {
+            throw new AppError('Este e-mail já está em uso.');
+        }
+
+        const salt = genSaltSync();
+        const hashedPassword = hashSync(password, salt);
+
+        const user = usersRepository.create({
             name,
             email,
-            password,
-            birthdate,
-            gen,
+            password: hashedPassword,
+            age,
+            avatar,
         });
 
-        await userRepository.save(user);
+        await redisCache.invalidate('usuarios');
+
+        await usersRepository.save(user);
 
         return user;
     }
 }
-
-export default CreateUserService;

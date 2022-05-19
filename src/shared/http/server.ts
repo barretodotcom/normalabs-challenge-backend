@@ -1,15 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import 'dotenv/config';
 import express, { NextFunction, Request, Response } from 'express';
+import 'express-async-errors';
 import cors from 'cors';
 import routes from './routes/router';
 import errorMidleware from './middlewares/middlewares';
 import AppError from '@shared/errors/AppErrors';
 import '@shared/typeorm';
-
+import rateLimiter from './middlewares/rateLimiter';
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(rateLimiter);
 
 app.use(routes);
 
