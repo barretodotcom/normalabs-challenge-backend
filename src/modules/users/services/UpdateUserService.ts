@@ -3,7 +3,7 @@ import UsersRepository from '../typeorm/repository/UsersRepository';
 import { User } from '../typeorm/entities/User';
 import { RequestParamHandler } from 'express';
 import { getCustomRepository } from 'typeorm';
-import RedisCache from '@shared/cache/RedisCache';
+
 interface IUser {
     id: string;
     name: string;
@@ -23,7 +23,6 @@ export default class UpdateUserService {
         avatar,
     }: IUser): Promise<User> {
         const usersRepository = getCustomRepository(UsersRepository);
-        const regisCache = new RedisCache();
         const user = await usersRepository.findOne(id);
 
         if (!user) {
@@ -35,8 +34,6 @@ export default class UpdateUserService {
         user.password = password;
         user.age = age;
         user.avatar = avatar;
-
-        await regisCache.invalidate('usuarios');
 
         await usersRepository.save(user);
 

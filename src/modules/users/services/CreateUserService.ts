@@ -4,7 +4,6 @@ import UsersRepository from '../typeorm/repository/UsersRepository';
 import { User } from '../typeorm/entities/User';
 import { genSaltSync, hashSync } from 'bcryptjs';
 import validator from 'validator';
-import RedisCache from '@shared/cache/RedisCache';
 
 interface IUser {
     name: string;
@@ -23,7 +22,6 @@ export default class CreateUserService {
         avatar,
     }: IUser): Promise<IUser> {
         const usersRepository = getCustomRepository(UsersRepository);
-        const redisCache = new RedisCache();
 
         if (!validator.isEmail(email)) {
             throw new AppError('Insira um email válido.');
@@ -44,8 +42,6 @@ export default class CreateUserService {
             age,
             avatar,
         });
-
-        await redisCache.invalidate('usuarios');
 
         await usersRepository.save(user);
 
