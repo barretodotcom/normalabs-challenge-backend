@@ -27,7 +27,7 @@ export default class UsersController {
             avatar,
         });
 
-        return response.json({lane: "oi"});
+        return response.json(user);
     }
 
     public async update(
