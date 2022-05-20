@@ -7,7 +7,7 @@ const sessionRouter = Router();
 const sessionController = new SessionController();
 
 sessionRouter.post(
-    '/login',
+    '/',
     celebrate({
         [Segments.BODY]: Joi.object({
             email: Joi.string().required(),
