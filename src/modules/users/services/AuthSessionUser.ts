@@ -37,6 +37,7 @@ export default class AuthSessionUser {
             subject: user.id,
             expiresIn: authConfig.jwt.expiresIn,
         });
+
         return { user, token };
     }
 }
