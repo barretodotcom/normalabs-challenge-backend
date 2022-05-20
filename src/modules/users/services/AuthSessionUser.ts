@@ -19,7 +19,7 @@ interface IResponse {
 }
 
 export default class AuthSessionUser {
-    public async execute({ email, password }: IUser): Promise<IResponse> {
+    public async execute(email: string, password: string): Promise<any> {
         const usersRepository = getCustomRepository(UsersRepository);
         const user = await usersRepository.findByEmail(email);
 
@@ -38,6 +38,6 @@ export default class AuthSessionUser {
             expiresIn: authConfig.jwt.expiresIn,
         });
 
-        return { user: user, token: token };
+        return { user, token };
     }
 }

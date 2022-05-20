@@ -14,7 +14,7 @@ const errorMidleware = (
             message: err.message,
         });
     }
-    return res.json({erro: 'errou bro'});
+    return res.json(err.message);
 };
 
 export default errorMidleware;
