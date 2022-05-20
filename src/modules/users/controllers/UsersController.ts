@@ -27,7 +27,7 @@ export default class UsersController {
             avatar,
         });
 
-        return response.json(user);
+        return response.json({lane: "oi"});
     }
 
     public async update(
@@ -60,6 +60,6 @@ export default class UsersController {
         const findNameById = new FindNameById();
         const user = await findNameById.execute(id);
 
-        return response.json({ lane: 'oi' });
+        return response.json(user);
     }
 }
