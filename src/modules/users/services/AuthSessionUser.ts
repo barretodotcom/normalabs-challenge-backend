@@ -38,6 +38,6 @@ export default class AuthSessionUser {
             expiresIn: authConfig.jwt.expiresIn,
         });
 
-        return { user, token };
+        return { user: user, token: token };
     }
 }

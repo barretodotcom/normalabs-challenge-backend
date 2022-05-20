@@ -8,6 +8,6 @@ export default class SessionController {
         const { email, password } = request.body;
 
         const user = await authSessionUser.execute({ email, password });
-        return response.json({ lane: 'oi' });
+        return response.json(user);
     }
 }
