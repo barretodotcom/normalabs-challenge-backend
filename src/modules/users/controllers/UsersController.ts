@@ -60,6 +60,6 @@ export default class UsersController {
         const findNameById = new FindNameById();
         const user = await findNameById.execute(id);
 
-        return response.json(user);
+        return response.json({ lane: 'oi' });
     }
 }
