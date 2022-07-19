@@ -1,9 +1,10 @@
-import { CreateUsers1652270705138 } from '@shared/typeorm/migrations/1652270705138-CreateUsers';
+import { uploadFile } from '@config/upload';
 import { Request, Response } from 'express';
-import CreateUserService from '../services/CreateUserService';
-import FindNameById from '../services/FindNameById';
-import ListUserService from '../services/ListUserService';
-import UpdateUserService from '../services/UpdateUserService';
+import { CreateUserService } from '../services/CreateUserService';
+import { FindUserByIdService } from '../services/FindUserById';
+import { ListUserService } from '../services/ListUserService';
+import { UpdateUserService } from '../services/UpdateUserService';
+
 interface IUser {
     name: string;
     email: string;
@@ -13,52 +14,44 @@ interface IUser {
 }
 
 export default class UsersController {
-    public async create(
-        request: Request,
-        response: Response,
-    ): Promise<Response> {
-        const { name, email, password, age, avatar } = request.body;
-        const createUser = new CreateUserService();
-        const user = await createUser.execute({
-            name,
-            email,
-            password,
-            age,
-            avatar,
-        });
+    public async create(request: Request, response: Response): Promise<Response> {
+
+        const createUserService = new CreateUserService();
+
+        const { name, email, password, position, accountNumber, cpf } = request.body;
+
+        const avatarFilename = request.file?.filename;
+
+        const user = await createUserService.execute({ name, email, password, position, accountNumber, cpf, avatarFilename });
 
         return response.json(user);
     }
 
-    public async update(
-        request: Request,
-        response: Response,
-    ): Promise<Response> {
-        const updateUser = new UpdateUserService();
-        const { id } = request.params;
-        const { name, email, password, age, avatar } = request.body;
-        const user = await updateUser.execute({
-            id,
-            name,
-            email,
-            password,
-            age,
-            avatar,
-        });
+    public async update(request: Request, response: Response,): Promise<Response> {
+
+        const updateUserService = new UpdateUserService();
+
+        const { name, email, password } = request.body;
+
+        const user = await updateUserService.execute({ name, email, password });
+
         return response.json(user);
     }
     public async list(request: Request, response: Response): Promise<Response> {
-        const listUsers = new ListUserService();
-        const users = await listUsers.execute();
+
+        const listUserService = new ListUserService();
+
+        const users = await listUserService.execute();
+
         return response.json(users);
     }
-    public async findUser(
-        request: Request,
-        response: Response,
-    ): Promise<Response> {
-        const { id } = request.params;
-        const findNameById = new FindNameById();
-        const user = await findNameById.execute(id);
+    public async findUser(request: Request, response: Response,): Promise<Response> {
+
+        const { userId } = request.params;
+
+        const findUserByIdService = new FindUserByIdService();
+
+        const user = findUserByIdService.execute(userId);
 
         return response.json(user);
     }

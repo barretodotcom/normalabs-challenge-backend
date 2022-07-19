@@ -1,42 +1,28 @@
+import validateFile, { upload } from '@config/upload';
+import { isUserAuthenticated } from '@shared/http/middlewares/isUserAuthenticated';
 import { celebrate, Segments } from 'celebrate';
 import Router from 'express-promise-router';
 import Joi from 'joi';
+import multer from 'multer';
+import { UserAvatarController } from '../controllers/UserAvatarController';
 import UsersController from '../controllers/UsersController';
-import isAuthenticated from '../../../shared/http/middlewares/isAuthenticated';
 
 const usersRouter = Router();
 
 const usersController = new UsersController();
+const userAvatarController = new UserAvatarController();
+const uploadFile = multer(upload);
 
-usersRouter.get('/', isAuthenticated, usersController.list);
-usersRouter.post(
-    '/',
-    celebrate({
-        [Segments.BODY]: Joi.object({
-            name: Joi.string().required(),
-            email: Joi.string().required(),
-            password: Joi.string().required(),
-            age: Joi.number().integer().required(),
-        }),
-    }),
-    usersController.create,
-);
-usersRouter.put(
-    '/:id',
-    celebrate({
-        [Segments.PARAMS]: Joi.object({
-            id: Joi.string().uuid().required(),
-        }),
-        [Segments.BODY]: Joi.object({
-            name: Joi.string().required(),
-            email: Joi.string().required(),
-            password: Joi.string().required(),
-            age: Joi.number().integer().required(),
-        }),
-    }),
-    usersController.update,
-);
+usersRouter.get('/list', usersController.list);
+usersRouter.post('/create', validateFile, usersController.create);
 
+usersRouter.put('/update/:id', usersController.update);
 usersRouter.get('/findone/:id', usersController.findUser);
 
+
+usersRouter.patch('/avatar',
+    isUserAuthenticated,
+    uploadFile.single('avatar'),
+    userAvatarController.update
+);
 export default usersRouter;

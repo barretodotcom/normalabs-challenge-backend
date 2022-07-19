@@ -1,39 +1,26 @@
-import AppError from '@shared/errors/AppErrors';
-import UsersRepository from '../typeorm/repository/UsersRepository';
-import { User } from '../typeorm/entities/User';
-import { RequestParamHandler } from 'express';
-import { getCustomRepository } from 'typeorm';
+import AppError from "@shared/errors/AppErrors";
+import { getCustomRepository } from "typeorm";
+import { UsersRepository } from "../typeorm/repositories/UsersRepositories";
 
-interface IUser {
-    id: string;
+interface IUpdateUser {
     name: string;
     email: string;
     password: string;
-    age: number;
-    avatar: string;
 }
 
-export default class UpdateUserService {
-    public async execute({
-        id,
-        name,
-        email,
-        password,
-        age,
-        avatar,
-    }: IUser): Promise<User> {
+export class UpdateUserService {
+    public async execute({ name, email, password }: IUpdateUser) {
         const usersRepository = getCustomRepository(UsersRepository);
-        const user = await usersRepository.findOne(id);
+
+        const user = await usersRepository.findByEmail(email);
 
         if (!user) {
-            throw new AppError('Este usuário não existe.');
+            throw new AppError("E-mail não encontrado.");
         }
 
         user.name = name;
         user.email = email;
         user.password = password;
-        user.age = age;
-        user.avatar = avatar;
 
         await usersRepository.save(user);
 

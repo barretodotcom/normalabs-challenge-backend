@@ -1,14 +1,13 @@
-import {
-    Entity,
-    Column,
-    PrimaryGeneratedColumn,
-    CreateDateColumn,
-} from 'typeorm';
+import { Paycheck } from "../../../paycheck/typeorm/entities/Paycheck";
+import { ServiceDesk } from "../../../service-desk/typeorm/entities/ServiceDesk";
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { v4 as uuid } from 'uuid';
 
-@Entity('users')
+@Entity("users")
 export class User {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+
+    @PrimaryColumn()
+    readonly id: string;
 
     @Column()
     name: string;
@@ -19,12 +18,28 @@ export class User {
     @Column()
     password: string;
 
-    @Column('int')
-    age: number;
+    @Column()
+    position: string;
 
     @Column()
+    accountNumber: number;
+
+    @Column()
+    cpf: string;
+
+    @Column({ nullable: true })
     avatar: string;
 
+    @OneToMany(type => Paycheck, paycheck => paycheck.user, { eager: true })
+    paycheck: Paycheck[];
+
+    @OneToMany(type => ServiceDesk, serviceDesk => serviceDesk.user, { eager: true })
+    serviceDesk: ServiceDesk[];
+
     @CreateDateColumn()
-    createdAt: Date;
+    created_at: Date;
+
+    constructor() {
+        this.id = uuid();
+    }
 }

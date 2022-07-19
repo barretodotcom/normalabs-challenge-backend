@@ -1,23 +1,26 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+import 'reflect-metadata';
+import '../../db';
 import 'dotenv/config';
-import express, { NextFunction, Request, Response } from 'express';
+import express from 'express';
 import 'express-async-errors';
 import cors from 'cors';
 import routes from './routes/router';
 import errorMidleware from './middlewares/middlewares';
-import '@shared/typeorm';
-const app = express();
+import { upload } from '@config/upload';
+import { isUserAuthenticated } from './middlewares/isUserAuthenticated';
+import path from 'path';
 
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+const app = express();
 
 app.use(cors());
 app.use(express.json());
-
+app.use('/files', express.static('./uploads'));
 app.use(routes);
 
 app.use(errorMidleware);
 
-app.listen(process.env.PORT || 3000, () => {
-    console.log('running... 🏆');
-    console.log('http://localhost:' + process.env.PORT);
+app.listen(3000, async () => {
+    console.log("database connected!");
+    console.log('running api... 🏆');
+    console.log('http://localhost:' + 3000);
 });

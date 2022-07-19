@@ -1,35 +1,56 @@
-import AppError from '@shared/errors/AppErrors';
-import { getCustomRepository } from 'typeorm';
-import UsersRepository from '../typeorm/repository/UsersRepository';
-import { User } from '../typeorm/entities/User';
-import { genSaltSync, hashSync } from 'bcryptjs';
-import validator from 'validator';
+import authConfig from "@config/authConfig";
+import { cpfValidator } from "@config/cpfValidator";
+import AppError from "@shared/errors/AppErrors";
+import { genSaltSync, hash, hashSync } from "bcryptjs";
+import { sign } from "jsonwebtoken";
+import { getCustomRepository } from "typeorm";
+import validator from "validator";
+import { User } from "../typeorm/entities/User";
+import { UsersRepository } from "../typeorm/repositories/UsersRepositories";
 
-interface IUser {
+interface ICreateUser {
     name: string;
     email: string;
+    position: string;
+    accountNumber: string;
+    cpf: string;
     password: string;
-    age: number;
-    avatar?: string;
+    avatarFilename: string | undefined;
 }
 
-export default class CreateUserService {
-    public async execute({
-        name,
-        email,
-        password,
-        age,
-        avatar,
-    }: IUser): Promise<IUser> {
+interface IResponse {
+    user: User;
+    token: string;
+}
+
+export class CreateUserService {
+
+    public async execute({ name, email, password, position, accountNumber, cpf, avatarFilename }: ICreateUser): Promise<IResponse> {
+
         const usersRepository = getCustomRepository(UsersRepository);
 
-        if (!validator.isEmail(email)) {
-            throw new AppError('Insira um email válido.');
+        if (!avatarFilename) {
+            throw new AppError("O avatar é necessário para o cadastro.");
         }
+
+        if (!validator.isEmail(email)) {
+            throw new AppError("Insira um e-mail válido.");
+        }
+
+        if (!cpfValidator(cpf)) {
+            throw new AppError("Insira um cpf válido.");
+        }
+
         const userExists = await usersRepository.findByEmail(email);
 
         if (userExists) {
-            throw new AppError('Este e-mail já está em uso.');
+            throw new AppError("Email já cadastrado.");
+        }
+
+        const cpfExists = await usersRepository.findByCpf(cpf);
+
+        if (cpfExists) {
+            throw new AppError("CPF já cadastrado.");
         }
 
         const salt = genSaltSync();
@@ -39,12 +60,21 @@ export default class CreateUserService {
             name,
             email,
             password: hashedPassword,
-            age,
-            avatar,
-        });
-
+            position,
+            accountNumber: parseInt(accountNumber),
+            cpf,
+            avatar: avatarFilename,
+            serviceDesk: [],
+            paycheck: []
+        })
         await usersRepository.save(user);
 
-        return user;
+        const token = sign({}, authConfig.jwt.userSecret, {
+            subject: user.id,
+            expiresIn: authConfig.jwt.expiresIn
+        });
+
+        return { user, token };
+
     }
 }

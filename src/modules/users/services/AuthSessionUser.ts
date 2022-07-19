@@ -1,14 +1,12 @@
-import AppError from '@shared/errors/AppErrors';
-import { compare, compareSync } from 'bcryptjs';
-import { getCustomRepository } from 'typeorm';
-import { User } from '../typeorm/entities/User';
-import UsersRepository from '../typeorm/repository/UsersRepository';
-import validator from 'validator';
+import AppError from "@shared/errors/AppErrors";
+import { compare } from "bcryptjs";
+import { getCustomRepository } from "typeorm";
 import { sign } from 'jsonwebtoken';
-import authConfig from '@config/authConfig';
-import { Console } from 'console';
+import { UsersRepository } from "../typeorm/repositories/UsersRepositories";
+import authConfig from "@config/authConfig";
+import { User } from "../typeorm/entities/User";
 
-interface IUser {
+interface IUserSession {
     email: string;
     password: string;
 }
@@ -18,25 +16,25 @@ interface IResponse {
     user: User;
 }
 
-export default class AuthSessionUser {
-    public async execute(email: string, password: string): Promise<any> {
+export class AuthSessionUser {
+    public async execute({ email, password }: IUserSession): Promise<IResponse> {
+
         const usersRepository = getCustomRepository(UsersRepository);
+
         const user = await usersRepository.findByEmail(email);
 
-        if (!validator.isEmail(email)) {
-            throw new AppError('Insira um email válido.');
+        if (!user) {
+            throw new AppError("E-mail não encontrado.");
         }
 
-        if (!user) {
-            throw new AppError('Este email não está cadastrado.');
+        if (!compare(password, user.password)) {
+            throw new AppError("Senha inválida.");
         }
-        if (!compareSync(password, user.password)) {
-            throw new AppError('Senha inválida.');
-        }
-        const token = sign({}, authConfig.jwt.secret, {
+
+        const token = sign({}, authConfig.jwt.userSecret, {
             subject: user.id,
-            expiresIn: authConfig.jwt.expiresIn,
-        });
+            expiresIn: authConfig.jwt.expiresIn
+        })
 
         return { user, token };
     }
