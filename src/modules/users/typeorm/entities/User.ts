@@ -1,6 +1,6 @@
 import { Paycheck } from "../../../paycheck/typeorm/entities/Paycheck";
 import { ServiceDesk } from "../../../service-desk/typeorm/entities/ServiceDesk";
-import { Column, CreateDateColumn, Entity, OneToMany, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryColumn } from "typeorm";
 import { v4 as uuid } from 'uuid';
 
 @Entity("users")

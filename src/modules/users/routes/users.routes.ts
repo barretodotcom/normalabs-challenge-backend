@@ -19,7 +19,6 @@ usersRouter.post('/create', validateFile, usersController.create);
 usersRouter.put('/update/:userId', usersController.update);
 usersRouter.get('/findone/:userId', usersController.findUser);
 
-
 usersRouter.patch('/avatar',
     isUserAuthenticated,
     uploadFile.single('avatar'),

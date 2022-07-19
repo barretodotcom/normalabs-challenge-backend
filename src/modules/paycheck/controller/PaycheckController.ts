@@ -7,9 +7,11 @@ export class PaycheckController {
     public async create(request: Request, response: Response): Promise<Response> {
         const createPaycheckService = new CreatePaycheckService();
 
-        const { companyName, socialReason, cnpj, money, extraTime, accountNumber, userCpf } = request.body;
+        const { userId } = request.params
 
-        const paycheck = await createPaycheckService.execute({ companyName, socialReason, cnpj, money, extraTime, accountNumber, userCpf })
+        const { companyName, socialReason, cnpj, extraTime, accountNumber } = request.body;
+
+        const paycheck = await createPaycheckService.execute({ companyName, socialReason, cnpj, extraTime, accountNumber, userId })
 
         return response.json(paycheck);
     }

@@ -1,4 +1,3 @@
-import { uploadFile } from '@config/upload';
 import { Request, Response } from 'express';
 import { CreateUserService } from '../services/CreateUserService';
 import { FindUserByIdService } from '../services/FindUserById';
@@ -51,7 +50,7 @@ export default class UsersController {
 
         const findUserByIdService = new FindUserByIdService();
 
-        const user = findUserByIdService.execute(userId);
+        const user = await findUserByIdService.execute(userId);
 
         return response.json(user);
     }

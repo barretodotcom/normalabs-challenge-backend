@@ -1,9 +1,10 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
 
-export class ChangedAvatarToNullable1658089564486 implements MigrationInterface {
-    name = 'ChangedAvatarToNullable1658089564486'
+export class CreateModules1658252630113 implements MigrationInterface {
+    name = 'CreateModules1658252630113'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.query(`CREATE TABLE "owner" ("id" varchar PRIMARY KEY NOT NULL, "email" varchar NOT NULL, "password" varchar NOT NULL)`);
         await queryRunner.query(`CREATE TABLE "service_desk" ("id" varchar PRIMARY KEY NOT NULL, "title" varchar NOT NULL, "details" varchar NOT NULL, "initialDate" datetime NOT NULL, "finalDate" datetime NOT NULL, "status" varchar NOT NULL, "createdAt" datetime NOT NULL DEFAULT (datetime('now')), "userId" varchar)`);
         await queryRunner.query(`CREATE TABLE "users" ("id" varchar PRIMARY KEY NOT NULL, "name" varchar NOT NULL, "email" varchar NOT NULL, "password" varchar NOT NULL, "position" varchar NOT NULL, "accountNumber" integer NOT NULL, "cpf" varchar NOT NULL, "avatar" varchar, "created_at" datetime NOT NULL DEFAULT (datetime('now')))`);
         await queryRunner.query(`CREATE TABLE "paychecks" ("id" varchar PRIMARY KEY NOT NULL, "companyName" varchar NOT NULL, "socialReason" varchar NOT NULL, "cnpj" varchar NOT NULL, "money" integer NOT NULL, "extraTime" integer NOT NULL, "createdAt" datetime NOT NULL DEFAULT (datetime('now')), "userId" varchar)`);
@@ -29,6 +30,7 @@ export class ChangedAvatarToNullable1658089564486 implements MigrationInterface 
         await queryRunner.query(`DROP TABLE "paychecks"`);
         await queryRunner.query(`DROP TABLE "users"`);
         await queryRunner.query(`DROP TABLE "service_desk"`);
+        await queryRunner.query(`DROP TABLE "owner"`);
     }
 
 }

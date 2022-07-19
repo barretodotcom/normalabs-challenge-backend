@@ -1,5 +1,6 @@
 import authConfig from "@config/authConfig";
 import { cpfValidator } from "@config/cpfValidator";
+import { filetypes } from "@config/validateFileFormat";
 import AppError from "@shared/errors/AppErrors";
 import { genSaltSync, hash, hashSync } from "bcryptjs";
 import { sign } from "jsonwebtoken";
@@ -31,6 +32,10 @@ export class CreateUserService {
 
         if (!avatarFilename) {
             throw new AppError("O avatar é necessário para o cadastro.");
+        }
+
+        if (!filetypes.test(avatarFilename)) {
+            throw new AppError("São aceitos somente imagens no formato jpeg, jpg e png.");
         }
 
         if (!validator.isEmail(email)) {

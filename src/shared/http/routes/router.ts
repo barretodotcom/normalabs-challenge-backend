@@ -4,13 +4,14 @@ import sessionRouter from '@modules/users/routes/session.routes';
 import serviceDeskRoutes from '@modules/service-desk/routes/service.desk.routes';
 import paycheckRoutes from '@modules/paycheck/routes/paycheck.routes';
 import { isUserAuthenticated } from '../middlewares/isUserAuthenticated';
-import { isOwnerAuthenticated } from '../middlewares/isOwnerAuthenticated';
+import ownerRoutes from '@modules/owner/routes/owner.routes';
 
 const routes = Router();
 
 routes.use('/users', usersRouter);
 routes.use('/session', sessionRouter);
 routes.use("/servicesdesks", isUserAuthenticated, serviceDeskRoutes);
-routes.use("/paycheck", isOwnerAuthenticated, paycheckRoutes);
+routes.use("/paycheck", paycheckRoutes);
+routes.use("/owner", ownerRoutes);
 
 export default routes;

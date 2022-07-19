@@ -1,3 +1,4 @@
+import { getSalary } from "@config/getSalary";
 import { UsersRepository } from "@modules/users/typeorm/repositories/UsersRepositories";
 import AppError from "@shared/errors/AppErrors";
 import { getCustomRepository } from "typeorm";
@@ -8,22 +9,23 @@ interface ICreatePaycheck {
     companyName: string;
     socialReason: string;
     cnpj: string;
-    money: number;
     extraTime: number;
     accountNumber: string;
-    userCpf: string;
+    userId: string;
 }
 
 export class CreatePaycheckService {
-    public async execute({ companyName, socialReason, cnpj, money, extraTime, accountNumber, userCpf }: ICreatePaycheck): Promise<Paycheck> {
+    public async execute({ companyName, socialReason, cnpj, extraTime, userId }: ICreatePaycheck): Promise<Paycheck> {
         const paycheckRepository = getCustomRepository(PaycheckRepository);
         const usersRepository = getCustomRepository(UsersRepository);
 
-        const user = await usersRepository.findByCpf(userCpf);
+        const user = await usersRepository.findById(userId);
 
         if (!user) {
             throw new AppError("Usuário não encontrado.");
         }
+
+        const money = getSalary(user.position);
 
         const paycheck = paycheckRepository.create({
             companyName,
