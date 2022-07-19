@@ -3,7 +3,6 @@ node_modules/
 build/
 temp/
 coverage
-ormconfig.json
 dist
 !uploads/.gitkeep
 uploads/*
