@@ -19,9 +19,11 @@ export class ServiceDeskController {
     public async delete(request: Request, response: Response): Promise<Response> {
         const deleteServiceDesk = new DeleteServiceDesk();
 
+        const userId = request.user.id
         const { serviceDeskId } = request.params;
+        const { reason } = request.body;
 
-        await deleteServiceDesk.execute(serviceDeskId);
+        await deleteServiceDesk.execute(userId, serviceDeskId, reason);
 
         return response.json({ message: "Tarefa deletada com sucesso." });
     }

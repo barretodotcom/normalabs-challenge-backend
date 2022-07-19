@@ -8,6 +8,5 @@ const serviceDeskController = new ServiceDeskController();
 
 serviceDeskRoutes.get("/list", serviceDeskController.list);
 serviceDeskRoutes.post("/create", isUserAuthenticated, serviceDeskController.create);
-serviceDeskRoutes.get("/list", isOwnerAuthenticated, serviceDeskController.list);
-
+serviceDeskRoutes.delete('/delete/:serviceDeskId', serviceDeskController.delete);
 export default serviceDeskRoutes;

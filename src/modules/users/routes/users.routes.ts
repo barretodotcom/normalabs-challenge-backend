@@ -16,8 +16,8 @@ const uploadFile = multer(upload);
 usersRouter.get('/list', usersController.list);
 usersRouter.post('/create', validateFile, usersController.create);
 
-usersRouter.put('/update/:id', usersController.update);
-usersRouter.get('/findone/:id', usersController.findUser);
+usersRouter.put('/update/:userId', usersController.update);
+usersRouter.get('/findone/:userId', usersController.findUser);
 
 
 usersRouter.patch('/avatar',
