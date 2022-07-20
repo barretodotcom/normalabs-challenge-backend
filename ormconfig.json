@@ -8,6 +8,6 @@
         "./dist/db/migrations/**.ts"
     ],
     "cli": {
-        "migrationsDir": "./dist/db/migrations"
+        "migrationsDir": "./src/db/migrations"
     }
 }
