@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { ChangeTaskStatus } from "../services/ChangeTaskStatus";
 import { CreateServiceDesk } from "../services/CreateServiceDesk";
 import { DeleteServiceDesk } from "../services/DeleteServiceDesk";
 import { ListServiceDesk } from "../services/ListServiceDesk";
@@ -34,5 +35,16 @@ export class ServiceDeskController {
         const serviceDesks = await listServiceDesk.execute();
 
         return response.json(serviceDesks);
+    }
+
+    public async changeStatus(request: Request, response: Response): Promise<Response> {
+        const changeTaskStatus = new ChangeTaskStatus();
+
+        const { serviceDeskId } = request.params;
+        const { status } = request.body;
+
+        const task = await changeTaskStatus.execute({ serviceDeskId, status });
+
+        return response.json(task);
     }
 }
