@@ -37,7 +37,7 @@ export class ServiceDeskController {
         return response.json(serviceDesks);
     }
 
-    public async changeStatus(request: Request, response: Response): Promise<Response> {
+    public async patch(request: Request, response: Response): Promise<Response> {
         const changeTaskStatus = new ChangeTaskStatus();
 
         const { serviceDeskId } = request.params;

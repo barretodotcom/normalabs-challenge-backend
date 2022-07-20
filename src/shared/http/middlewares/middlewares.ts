@@ -14,7 +14,7 @@ const errorMidleware = (
             message: err.message,
         });
     }
-    // console.log(err);
+    console.log(err);
     return res.json({ message: "Ocorreu um erro interno! Já estamos trabalhando nisso." });
 };
 
