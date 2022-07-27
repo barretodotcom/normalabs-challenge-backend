@@ -1,5 +1,5 @@
 import AppError from "@shared/errors/AppErrors";
-import { compare } from "bcryptjs";
+import { compareSync } from "bcryptjs";
 import { getCustomRepository } from "typeorm";
 import { sign } from 'jsonwebtoken';
 import { UsersRepository } from "../typeorm/repositories/UsersRepositories";
@@ -27,7 +27,7 @@ export class AuthSessionUser {
             throw new AppError("E-mail não encontrado.");
         }
 
-        if (!compare(password, user.password)) {
+        if (!compareSync(password, user.password)) {
             throw new AppError("Senha inválida.");
         }
 
